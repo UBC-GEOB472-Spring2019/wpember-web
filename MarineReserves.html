@@ -1,0 +1,127 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset='utf-8' />
+  <title>Pemberton: Australia's Commonwealth Marine Reserves</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css' rel='stylesheet' />
+  <style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+  </style>
+</head>
+
+<body>
+  <div id='map'></div>
+
+  <div class='map-overlay' id='features'><h2>Australia's Commonwealth Marine Reserves</h2><div
+    id='pd'><p>Australia has the largest network of protected waters on earth. However, regulations vary widely across specific types of reserves. Hover over each to learn more, and be sure to zoom to view the fragile coral ecosystems!</p></div></div>
+  <script>
+
+
+    mapboxgl.accessToken = 'pk.eyJ1Ijoid3BlbWJlciIsImEiOiJjanJzNjEzY24xbjF0M3lsOXV4c3p1eWczIn0.KLHpFhNemrL6bXZXNcRbXg';
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/wpember/cjrtmp1k51cqb1gqem9nprowz',
+      center: [122.873852, -21.285999],
+      zoom: 2.4
+      });
+
+    map.on('load', function() {
+
+      map.on('mousemove', function(e) {
+        var zones = map.queryRenderedFeatures(e.point, {
+            layers: ['MarineZones']
+        });
+        if (zones.length>0) {
+
+          if (zones[0].properties.styleUrl == '#style0') {
+            document.getElementById('pd').innerHTML = '<h3><strong>' + zones[0].properties.name + '</strong></h3><p><strong><em>' + '</strong> A Sanctuary Zone. Full protections from all forms of human interaction, including any kind of fishing, prospecting, and transport.</em></p>';
+        } if (zones[0].properties.styleUrl == '#style1') {
+          document.getElementById('pd').innerHTML = '<h3><strong>' + zones[0].properties.name + '</strong></h3><p><strong><em>' + '</strong> A Marine National Park. Strong restrictions on commercial fishing and prospecting, with absolutely no mining. Research and recreation premitted with basic permits.</em></p>';
+        } if (zones[0].properties.styleUrl  == '#style2') {
+          document.getElementById('pd').innerHTML = '<h3><strong>' + zones[0].properties.name + '</strong></h3><p><strong><em>' + '</strong> A Recreational Use Zone. Some protections and permits required for infastructure, with limits to large vessels.</em></p>';
+        } if (zones[0].properties.styleUrl  == '#style3') {
+          document.getElementById('pd').innerHTML = '<h3><strong>' + zones[0].properties.name + '</strong></h3><p><strong><em>' + '</strong> A Habitat Protection Zone. Very strong protections, although special permits may be obtained for some recreational use and personal fishing. Open to research, but no industry. </em></p>';
+        } if (zones[0].properties.styleUrl  == '#style4') {
+          document.getElementById('pd').innerHTML = '<h3><strong>' + zones[0].properties.name + '</strong></h3><p><strong><em>' + '</strong> A Coral Habitat Protection Zone. Like habitat proection zones, very strong protections exsist but with additional limits to anchoring and other activities.</em></p>';
+        } if (zones[0].properties.styleUrl  == '#style5') {
+          document.getElementById('pd').innerHTML = '<h3><strong>' + zones[0].properties.name + '</strong></h3><p><strong><em>' + '</strong> A Special Purpose Zone. Despite identification of ecological significance in need of protection, Special Purpose Zones allow for most commercial fishing, oil and gas prospecting, and other harmful practices with permits. </em></p>';
+        } if (zones[0].properties.styleUrl  == '#style6') {
+          document.getElementById('pd').innerHTML = '<h3><strong>' + zones[0].properties.name + '</strong></h3><p><strong><em>' + '</strong> A Special Purpose Zone, Oil and Gas Exclustion. As with normal Special Purpose Zones, except an addition protection against oil & gas drilling is in place. </em></p>';
+        } if (zones[0].properties.styleUrl  == '#style7') {
+          document.getElementById('pd').innerHTML = '<h3><strong>' + zones[0].properties.name + '</strong></h3><p><strong><em>' + '</strong> A Multiple Use Zone. A wide variety of regulations may or may not apply to multi-use zones, with many containing harmful environmental allowances.</em></p>';
+        } if (zones[0].properties.styleUrl  == '#style8') {
+          document.getElementById('pd').innerHTML = '<h3><strong>' + zones[0].properties.name + '</strong></h3><p><strong><em>' + '</strong> A General Use Zone. Typically most minor forms of environmentl harm are premitted; often used as a placeholder before additional classifications.</em></p>';
+        }} else {
+          document.getElementById('pd').innerHTML = '<p>Australia has the largest network of protected waters on earth. However, regulations vary widely across specific types of reserves. Hover over each to learn more, and be sure to zoom to view the fragile coral ecosystems!</p>';
+        }
+
+      }
+      );
+
+      map.getCanvas().style.cursor = 'default';
+    });
+
+  </script>
+  <style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  h2,
+  h3 {
+    margin: 10px;
+    font-size: 1.2em;
+  }
+
+  h3 {
+    font-size: 1em;
+  }
+
+  p {
+    font-size: 0.85em;
+    margin: 10px;
+    text-align: left;
+  }
+
+  /**
+  * Create a position for the map
+  * on the page */
+  #map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+  }
+
+  /**
+  * Set rules for how the map overlays
+  * (info box and legend) will be displayed
+  * on the page. */
+  .map-overlay {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.8);
+    margin-right: 20px;
+    font-family: Arial, sans-serif;
+    overflow: auto;
+    border-radius: 3px;
+  }
+
+  #features {
+    top: 0;
+    height: 220px;
+    margin-top: 20px;
+    width: 250px;
+  }
+  </style>
+</body>
+
+</html>
