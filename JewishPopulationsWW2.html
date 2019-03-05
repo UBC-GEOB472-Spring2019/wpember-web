@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset='utf-8' />
+  <title>Pemberton: Jewish Populations during WW2</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css' rel='stylesheet' />
+  <style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+  </style>
+</head>
+
+<body>
+  <nav id="menu"></nav>
+  <div id='map'></div>
+
+  </div>
+
+  <div class='map-overlay' id='features'><h2>Jewish Populations During WW2</h2><div
+    id='pd'><p>The Jewish population of Europe was devastated by the Nazis during the Holocaust. The Second World War allowed for Hitler to enact his "Final Solution" to the "Jewish Question", leading to the direct death of over 6 million Jewish people. </p></div>
+    <div id='change'><p>Three key moments in WW2 can be selected using the timeline, and the buttons can be used to see the total Jewish population in each country or the net change since the start of the war. </p></div></div>
+    <div class='map-overlay-inner' id='sliderbar'>
+      <h2>Year: <label id='year'>1945</label></h2>
+      <input id='slider' class='row' type='range' min='0' max='3' step='1' value='12' />
+    </div>
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoid3BlbWJlciIsImEiOiJjanN0ZWVnZ3EyMnRvNDNycnZzZjQ2YzV6In0.BY1TxaLMkq0xg4J7nI43hw';
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/wpember/cjst8phwg33541fnvlqavyez6',
+      center: [31.423922, 57.350963],
+      zoom: 3.04
+      });
+    var toggleableLayerIds = ['1945-NetPop','1945-RawPop']
+
+    var toggledLayer = "1945-NetPop";
+
+    var hoveredId =  null;
+
+    var popup= new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false,
+    });
+
+    for (var i = 0; i < toggleableLayerIds.length; i++) {
+    var id = toggleableLayerIds[i];
+
+    var link = document.createElement('a');
+      link.href = '#';
+      link.className = 'active';
+      link.textContent = id;
+
+      link.onclick = function (e) {
+      var clickedLayer = this.textContent;
+      e.preventDefault();
+      e.stopPropagation();
+
+      var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+
+      if (visibility === 'visible') {
+        map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+        this.className = '';
+        console.log(toggledLayer)
+        if (toggledLayer == '1945-NetPop'){
+          toggledLayer = '1945-RawPop'
+        }
+        else{
+          toggledLayer = '1945-NetPop'
+        }
+        console.log(toggledLayer)
+      } else {
+        this.className = 'active';
+        map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+        if (toggledLayer == '1945-RawPop'){
+          toggledLayer = '1945-NetPop'
+        }
+        else{
+          toggledLayer = '1945-RawPop'
+        };
+        }
+      }
+
+      var layers = document.getElementById('menu');
+      layers.appendChild(link);
+    }
+
+    map.on('load',function(){
+
+    //  map.addSource("1945", {
+      //  "type": "geojson",
+      //  "data": "https://studio.mapbox.com/tilesets/wpember.0ym6vrov"
+    //  });
+
+    //  map.addLayer({
+      //  "id": "borders",
+    //    "type": "line",
+      //  "source": "1945",
+      //  "layout": {},
+      //  "paint": {
+      //    "line-color": "#ffffff",
+      //    "line-width": 1
+
+        //  }
+      //  });
+      if (toggledLayer == '1945-NetPop'){
+
+        map.on('mousemove', function(e) {
+          var country = map.queryRenderedFeatures(e.point,{
+            layers:['1945-NetPop']
+          });
+          if (country.length>0){
+
+            var text = '<strong> Jewish Population change since the start of the war in '+ country[0].properties.Name + ": " + country[0].properties.Net_Jew_Pop_1;
+
+            popup.setLngLat(e.lngLat)
+            popup.setHTML(text)
+            popup.addTo(map);
+          }
+          else {popup.remove();}
+
+        });
+
+      }
+      if (toggledLayer == '1945-RawPop'){
+        map.on('mousemove', function(e) {
+          var country = map.queryRenderedFeatures(e.point,{
+            layers:['1945-RawPop']
+          });
+          if (country.length>0){
+
+            var text = '<strong> Jewish Population in '+ country[0].properties.Name + ": " + country[0].properties.Net_Jew_Pop;
+
+            popup.setLngLat(e.lngLat)
+            popup.setHTML(text)
+            popup.addTo(map);
+          }
+          else {popup.remove();}
+
+        });
+      }
+      map.getCanvas().style.cursor = 'default';
+    });
+
+
+
+  </script>
+
+  <style>
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    h2,
+    h3 {
+      margin: 10px;
+      font-size: 1.2em;
+    }
+    h3 {
+      font-size: 1em;
+    }
+    p {
+      font-size: 0.85em;
+      margin: 10px;
+      text-align: left;
+    }
+    /**
+    * Create a position for the map
+    * on the page */
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+    /**
+    * Set rules for how the map overlays
+    * (info box and legend) will be displayed
+    * on the page. */
+    .map-overlay {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.8);
+      margin-right: 20px;
+      font-family: Arial, sans-serif;
+      overflow: auto;
+      border-radius: 3px;
+    }
+    .map-overlay .map-overlay-inner {
+      background-color: #fff;
+      box-shadow:0 1px 2px rgba(0, 0, 0, 0.20);
+      border-radius: 3px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .map-overlay h2 {
+      line-height: 24px;
+      display: block;
+      margin: 0 0 10px;
+    }
+
+    .map-overlay input {
+      background-color: transparent;
+      display: inline-block;
+      width: 100%;
+      position: relative;
+      margin: 0;
+      cursor: ew-resize;
+    }
+    #features {
+      top: 0;
+      height: 320px;
+      margin-top: 20px;
+      width: 250px;
+    }
+    #menu {
+      background: #fff;
+      position: absolute;
+      z-index: 1;
+      top: 20px;
+      right: 280px;
+      border-radius: 3px;
+      width: 120px;
+      border: 1px solid rgba(0,0,0,0.4);
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    #menu a {
+      font-size: 13px;
+      color: #404040;
+      display: block;
+      margin: 0;
+      padding: 0;
+      padding: 10px;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(0,0,0,0.25);
+      text-align: center;
+    }
+
+    #menu a:last-child {
+      border: none;
+    }
+
+    #menu a:hover {
+      background-color: #f8f8f8;
+      color: #404040;
+    }
+
+    #menu a.active {
+      background-color: #3887be;
+      color: #ffffff;
+    }
+
+    #menu a.active:hover {
+      background: #3074a4;
+    }
+
+  </style>
+</body>
+
+</html>
